@@ -134,57 +134,6 @@ namespace BetterCollections
 
         #endregion
 
-        #region Timed Stuff
-        protected int Timer;
-
-        protected readonly BetterList<Timer> Timers = new BetterList<Timer>();
-
-        public void CreateTimer(int milliseconds)
-        {
-            Timer = milliseconds;
-            if (Timer > 0)
-            {
-                Item_Added += (x, y) =>
-                {
-                    var timer = new Timer(Timer)
-                    {
-                        AutoReset = false,
-                    };
-                    timer.Start();
-                    Timers.Add(timer);
-                    var index = Timers[timer].Last();
-                    timer.Elapsed += delegate
-                    {
-                        RemoveAt(y);
-                        timer.Stop();
-                        timer.Dispose();
-                        Timers.RemoveAt(index);
-                    };
-                };
-            }
-        }
-
-        public void ChangeTimer(int miliseconds)
-        {
-            if (Timers.Count <= 0)
-                return;
-            foreach (var timer in Timers)
-                timer.Interval = miliseconds;
-        }
-
-        public void RemoveTimer()
-        {
-            if (Timers.Count <= 0)
-                return;
-            for (int i = 0; i < Timers.Count; i++)
-            {
-                Timers[i].Stop();
-                Timers[i].Dispose();
-            }
-            Timers.Clear();
-        }
-        #endregion
-
         #region Castings
         public static explicit operator T[](BetterList<T> list) => list.ToArray();
 

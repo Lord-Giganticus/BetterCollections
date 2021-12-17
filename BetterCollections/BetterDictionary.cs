@@ -102,57 +102,6 @@ namespace BetterCollections
         }
         #endregion
 
-        #region Timed Stuff
-        protected int Timer;
-
-        protected readonly BetterList<Timer> Timers = new BetterList<Timer>();
-
-        public void CreateTimer(int milliseconds)
-        {
-            Timer = milliseconds;
-            if (Timer > 0)
-            {
-                Item_Added += (x) =>
-                {
-                    var timer = new Timer(milliseconds)
-                    {
-                        AutoReset = false
-                    };
-                    timer.Start();
-                    Timers.Add(timer);
-                    var index = Timers[timer].Last();
-                    timer.Elapsed += delegate
-                    {
-                        Remove(x.Key);
-                        timer.Stop();
-                        timer.Dispose();
-                        Timers.RemoveAt(index);
-                    };
-                };
-            }
-        }
-
-        public void ChangeTimer(int milliseconds)
-        {
-            if (Timers.Count <= 0)
-                return;
-            foreach (var timer in Timers)
-                timer.Interval = milliseconds;
-        }
-
-        public void RemoveTimer()
-        {
-            if (Timers.Count <= 0)
-                return;
-            for (int i = 0; i < Timers.Count; i++)
-            {
-                Timers[i].Stop();
-                Timers[i].Dispose();
-            }
-            Timers.Clear();
-        }
-        #endregion
-
         #region Casting
         public static explicit operator MultiKeyDict<TKey, TValue>(BetterDictionary<TKey, TValue> dict) =>
             new MultiKeyDict<TKey, TValue>(dict);
